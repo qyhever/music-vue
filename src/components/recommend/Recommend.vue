@@ -1,17 +1,39 @@
 <template>
   <div class="recommend" ref="recommend">
     
-    <!-- 1.3 轮播图结构-->
-    <div class="slider-wrapper" v-if="sliderList.length" ref="sliderWrapper">
-      <slider>
-        <div v-for="(item, index) in sliderList" :key="index">
-          <a :href="item.linkUrl">
-            <img class="needsclick" :src="item.picUrl" alt="">
-          </a>
-        </div>
-      </slider>
-    </div>
+    <!-- 2.4 使用scroll组件 -->
+    <scroll class="recommend-content" :data="discList">
+      <div>
 
+        <!-- 1.3 轮播图结构-->
+        <div class="slider-wrapper" v-if="sliderList.length" ref="sliderWrapper">
+          <slider>
+            <div v-for="(item, index) in sliderList" :key="index">
+              <a :href="item.linkUrl">
+                <img class="needsclick" :src="item.picUrl" alt="">
+              </a>
+            </div>
+          </slider>
+        </div>
+
+        <!-- 2.3 热门歌单列表-->
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li class="item" v-for="(item, index) in discList" :key="index">
+              <div class="icon">
+                <img width="60" height="60" v-lazy="item.imgurl">
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </scroll>
 
   </div>
 </template>
@@ -20,8 +42,9 @@
 import {getSliderList, getDiscList} from 'api/recommend';
 import {ERR_OK} from 'api/config';
 import Slider from 'base-components/slider/BaseSlider';
+import Scroll from 'base-components/scroll/BaseScroll';
 export default {
-  components: {Slider},
+  components: {Slider, Scroll},
   data() {
     return {
       sliderList: [],
@@ -48,7 +71,6 @@ export default {
       getDiscList().then(res => {
         if (res.code === ERR_OK) {
           this.discList = res.data.list;
-          console.log(this.discList);
         }
       });
     }

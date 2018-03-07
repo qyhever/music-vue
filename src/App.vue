@@ -17,7 +17,5 @@ export default {
 </script>
 
 <style lang="stylus">
-@import "~common/stylus/variable"
-#app
-  color: $color-theme
+
 </style>
