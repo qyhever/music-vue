@@ -5,8 +5,27 @@
 </template>
 
 <script>
+import {getRecommend} from 'api/recommend';
+import {ERR_OK} from 'api/config';
 export default {
-  
+  data() {
+    return {
+      sliderList: []
+    }
+  },
+  created() {
+    this._getRecommend();
+  },
+  methods: {
+    _getRecommend() {
+      getRecommend().then(res => {
+        console.log(res.data.slider);
+        if (res.code === ERR_OK) {
+          this.sliderList = res.data.slider;
+        }
+      });
+    }
+  }
 }
 </script>
 
