@@ -10,7 +10,11 @@
 			<li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
 				<h2 class="list-group-title">{{group.title}}</h2>
 				<ul>
-					<li class="list-group-item" v-for="(item, index) in group.items" :key="index">
+          <!-- 6.0 添加点击跳转事件 -->
+					<li class="list-group-item"
+              v-for="(item, index) in group.items"
+              :key="index"
+              @click="selectItem(item)">
 						<img class="avatar" v-lazy="item.avatar" alt="">
 						<span class="name">{{item.name}}</span>
 					</li>
@@ -163,6 +167,10 @@ export default {
           this.listHeight.push(height);
         }
       }
+    },
+    // 6.1 把点击的这个元素传给父组件，让父组件完成跳转逻辑
+    selectItem(item) {
+      this.$emit('select', item);
     },
     // 传入索引让容器滚动到对应位置
     _scrollTo(index) {

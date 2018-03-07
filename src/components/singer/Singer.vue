@@ -1,7 +1,8 @@
 <template>
   <div class="singer" ref="singer">
-		<!-- 1.4 使用listview组件 -->
-		<list-view :data="singerList"></list-view>
+		<!-- 1.4 使用listview组件 --><!-- 2.0 接受子组件传递过来的点击元素-->
+		<list-view :data="singerList" @select="selectSinger"></list-view>
+		<router-view></router-view>
   </div>
 </template>
 
@@ -10,6 +11,7 @@ import {getSingerList} from 'api/singer';
 import {ERR_OK} from 'api/config';
 import ListView from 'base-components/listview/BaseListView';
 import Singer from 'common/js/singer';
+import {mapMutations} from 'vuex';
 
 const HOT_NAME = '热门';
 const HOT_SINGER_LEN = 10;
@@ -25,6 +27,17 @@ export default {
 		this._getSingerList();
 	},
 	methods: {
+		// 3.0 
+		...mapMutations({
+			setSinger: 'SET_SINGER'
+		}),
+		// 2.1 接受数据，与跳转逻辑
+		selectSinger(item) {
+			this.$router.push({
+				path: '/singer/' + item.id
+			});
+			this.setSinger(item); // 3.1
+		},
 		// 1.0 获取歌手列表数据
 		_getSingerList() {
 			getSingerList().then(res => {
