@@ -1,7 +1,7 @@
 <template>
   <div class="recommend" ref="recommend">
     
-    <!-- 2.0 轮播图结构-->
+    <!-- 1.3 轮播图结构-->
     <div class="slider-wrapper" v-if="sliderList.length" ref="sliderWrapper">
       <slider>
         <div v-for="(item, index) in sliderList" :key="index">
@@ -17,19 +17,22 @@
 </template>
 
 <script>
-import {getSliderList} from 'api/recommend';
+import {getSliderList, getDiscList} from 'api/recommend';
 import {ERR_OK} from 'api/config';
 import Slider from 'base-components/slider/BaseSlider';
 export default {
   components: {Slider},
   data() {
     return {
-      sliderList: []
+      sliderList: [],
+      discList: []
     }
   },
   created() {
     // 1.1调用
     this._getSliderList();
+    // 2.1调用
+    this._getDiscList();
   },
   methods: {
     // 1.0 获取轮播图数据
@@ -37,7 +40,15 @@ export default {
       getSliderList().then(res => {
         if (res.code === ERR_OK) {
           this.sliderList = res.data.slider;
-          console.log(this.sliderList);
+        }
+      });
+    },
+    // 2.0获取热门唱片数据
+    _getDiscList() {
+      getDiscList().then(res => {
+        if (res.code === ERR_OK) {
+          this.discList = res.data.list;
+          console.log(this.discList);
         }
       });
     }
