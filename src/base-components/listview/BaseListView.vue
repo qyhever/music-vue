@@ -32,16 +32,22 @@
 				</li>
 			</ul>
 		</div>
+
+    <!-- 4.0 loading结构 => 没有数据时显示，获取到数据时隐藏 -->
+    <div class="loading-container" v-show="!data.length">
+      <loading></loading>
+    </div>
   </scroll>
 </template>
 
 <script>
 import Scroll from 'base-components/scroll/BaseScroll';
+import Loading from 'base-components/loading/BaseLoading';
 import {getData} from 'common/js/dom';
 
 const ANCHOR_HEIGHT = 18;
 export default {
-  components: {Scroll},
+  components: {Scroll, Loading},
 	props: {
     data: {
       type: Array,
@@ -72,10 +78,14 @@ export default {
     // 4.3 观测当前的高度，得到范围之间的索引
     scrollY(newY) {
       const listHeight = this.listHeight;
+      if (newY > 0) {
+        this.currentIndex = 0;
+        return;
+      }
       for (let i = 0; i < listHeight.length; i++) {
         const height1 = listHeight[i];
         const height2 = listHeight[i + 1];
-        if (!height2 || (-newY > height1 && -newY < height2)) {
+        if (!height2 || (-newY >= height1 && -newY < height2)) {
           this.currentIndex = i;
           return;
         }
@@ -98,7 +108,6 @@ export default {
     // 3.0 点击字母
     onShortcutTouchStart(e) {
       let anchorIndex = getData(e.target, 'index'); // 获取到的自定义index是String
-      console.log(anchorIndex)
       let firstTouch = e.touches[0];
       this.touch.y1 = firstTouch.pageY;
       this.touch.anchorIndex = anchorIndex;
@@ -132,6 +141,18 @@ export default {
     },
     // 传入索引让容器滚动到对应位置
     _scrollTo(index) {
+      console.log(index)
+      // 处理点击最上部和最底部index为null的情况
+      if (!index && index !== 0) {
+        return;
+      }
+      if (index < 0) {
+        index = 0;
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2;
+      }
+      // 点击改变scrollY的状态，使样式改变
+      this.scrollY = -this.listHeight[index];
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0);
     }
   }
