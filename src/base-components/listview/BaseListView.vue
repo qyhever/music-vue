@@ -33,6 +33,11 @@
 			</ul>
 		</div>
 
+    <!-- 5.0 头部固定标题 -->
+    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+      <div class="fixed-title">{{fixedTitle}}</div>
+    </div>
+
     <!-- 4.0 loading结构 => 没有数据时显示，获取到数据时隐藏 -->
     <div class="loading-container" v-show="!data.length">
       <loading></loading>
@@ -46,6 +51,7 @@ import Loading from 'base-components/loading/BaseLoading';
 import {getData} from 'common/js/dom';
 
 const ANCHOR_HEIGHT = 18;
+const TITLE_HEIGHT = 30;
 export default {
   components: {Scroll, Loading},
 	props: {
@@ -57,7 +63,8 @@ export default {
   data() {
     return {
       scrollY: -1,
-      currentIndex: 0
+      currentIndex: 0,
+      diff: -1
     };
   },
   computed: {
@@ -66,6 +73,13 @@ export default {
       return this.data.map(value => {
         return value.title.substr(0, 1);
       });
+    },
+    // 5.1 fixedTitle是依赖this.currentIndex变化的
+    fixedTitle() {
+      if (this.scrollY > 0) {
+        return '';
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : '';
     }
   },
   watch: {
@@ -76,21 +90,32 @@ export default {
       });
     },
     // 4.3 观测当前的高度，得到范围之间的索引
-    scrollY(newY) {
+    scrollY(newScrollY) {
       const listHeight = this.listHeight;
-      if (newY > 0) {
+      if (newScrollY > 0) {
         this.currentIndex = 0;
         return;
       }
       for (let i = 0; i < listHeight.length; i++) {
         const height1 = listHeight[i];
         const height2 = listHeight[i + 1];
-        if (!height2 || (-newY >= height1 && -newY < height2)) {
+        if (!height2 || (-newScrollY >= height1 && -newScrollY < height2)) {
           this.currentIndex = i;
+          this.diff = newScrollY + height2; // 5.2
           return;
         }
       }
       this.currentIndex = 0;
+    },
+    // 5.2 切换标题时平滑过渡
+    diff(newDiff) {
+      // 如果newDiff在(0, 30)区间内，就返回newDiff和30的差值，这个值是不断变化的
+      let fixedTop = (newDiff > 0 && newDiff < TITLE_HEIGHT) ? newDiff - TITLE_HEIGHT : 0;
+      if (this.fixedTop === fixedTop) {
+        return;
+      }
+      this.fixedTop = fixedTop;
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`;
     }
   },
   created() {
@@ -141,7 +166,6 @@ export default {
     },
     // 传入索引让容器滚动到对应位置
     _scrollTo(index) {
-      console.log(index)
       // 处理点击最上部和最底部index为null的情况
       if (!index && index !== 0) {
         return;
