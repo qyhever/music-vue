@@ -2,7 +2,7 @@ import jsonp from 'common/js/jsonp';
 import {commonParams, options} from './config';
 import axios from 'axios';
 
-export function getRecommend() {
+export function getSliderList() {
 	const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg';
 
   // 将commonParams和后面的对象合并到新对象param

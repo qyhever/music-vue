@@ -1,27 +1,43 @@
 <template>
   <div class="recommend" ref="recommend">
-    推荐页面
+    
+    <!-- 2.0 轮播图结构-->
+    <div class="slider-wrapper" v-if="sliderList.length" ref="sliderWrapper">
+      <slider>
+        <div v-for="(item, index) in sliderList" :key="index">
+          <a :href="item.linkUrl">
+            <img class="needsclick" :src="item.picUrl" alt="">
+          </a>
+        </div>
+      </slider>
+    </div>
+
+
   </div>
 </template>
 
 <script>
-import {getRecommend} from 'api/recommend';
+import {getSliderList} from 'api/recommend';
 import {ERR_OK} from 'api/config';
+import Slider from 'base-components/slider/BaseSlider';
 export default {
+  components: {Slider},
   data() {
     return {
       sliderList: []
     }
   },
   created() {
-    this._getRecommend();
+    // 1.1调用
+    this._getSliderList();
   },
   methods: {
-    _getRecommend() {
-      getRecommend().then(res => {
-        console.log(res.data.slider);
+    // 1.0 获取轮播图数据
+    _getSliderList() {
+      getSliderList().then(res => {
         if (res.code === ERR_OK) {
           this.sliderList = res.data.slider;
+          console.log(this.sliderList);
         }
       });
     }
