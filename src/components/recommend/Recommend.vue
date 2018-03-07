@@ -1,8 +1,8 @@
 <template>
   <div class="recommend" ref="recommend">
     
-    <!-- 2.4 使用scroll组件 -->
-    <scroll class="recommend-content" :data="discList">
+    <!-- 2.3 使用scroll组件 -->
+    <scroll class="recommend-content" :data="discList" ref="scroll">
       <div>
 
         <!-- 1.3 轮播图结构-->
@@ -10,13 +10,14 @@
           <slider>
             <div v-for="(item, index) in sliderList" :key="index">
               <a :href="item.linkUrl">
-                <img class="needsclick" :src="item.picUrl" alt="">
+                <!-- 3.0 注册图片加载事件 -->
+                <img class="needsclick" @load="loadImage" :src="item.picUrl" alt="">
               </a>
             </div>
           </slider>
         </div>
 
-        <!-- 2.3 热门歌单列表-->
+        <!-- 2.2 热门歌单列表-->
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
@@ -33,6 +34,11 @@
         </div>
 
       </div>
+      <!-- 4.0 loading结构 => 没有数据时显示，获取到数据时隐藏 -->
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
+
     </scroll>
 
   </div>
@@ -43,8 +49,9 @@ import {getSliderList, getDiscList} from 'api/recommend';
 import {ERR_OK} from 'api/config';
 import Slider from 'base-components/slider/BaseSlider';
 import Scroll from 'base-components/scroll/BaseScroll';
+import Loading from 'base-components/loading/BaseLoading';
 export default {
-  components: {Slider, Scroll},
+  components: {Slider, Scroll, Loading},
   data() {
     return {
       sliderList: [],
@@ -73,6 +80,13 @@ export default {
           this.discList = res.data.list;
         }
       });
+    },
+    // 3.1 解决歌单数据先加载导致不能滑到底部的问题
+    loadImage() {
+      if (!this.isImageLoaded) {
+        this.$refs.scroll.refresh();
+        this.isImageLoaded = true;
+      }
     }
   }
 }
