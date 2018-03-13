@@ -1,22 +1,55 @@
 <template>
   <transition name="slide">
     <div class="singer-detail">
-      {{id}}
+      
     </div>
   </transition>
 </template>
 
 <script>
 import {mapGetters} from 'vuex';
+import {getSingerDetail} from 'api/singer';
+import {ERR_OK} from 'api/config';
+import {createSong} from 'common/js/song';
 export default {
+  data() {
+    return {
+      songs: []
+    }
+  },
   computed: {
     ...mapGetters([
       'singer'
     ])
   },
   created() {
-    this.id = this.$route.params.id;
-    console.log(this.singer);
+    // this.id = this.$route.params.id;
+    // console.log(this.singer);
+    this._getDetail();
+  },
+  methods: {
+    _getDetail() {
+      if (!this.singer.id) {
+        this.$router.push('/singer');
+        return;
+      }
+      getSingerDetail(this.singer.id).then(res => {
+        if (res.code === ERR_OK) {
+          this.songs = this._normalizeSongs(res.data.list);
+          console.log(this.songs);
+        }
+      });
+    },
+    _normalizeSongs(list) {
+      let ret = [];
+      list.forEach(item => {
+        let {musicData} = item;
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData));
+        }
+      });
+      return ret;
+    }
   }
 }
 </script>
