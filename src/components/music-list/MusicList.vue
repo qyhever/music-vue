@@ -7,7 +7,11 @@
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="filter"></div>
     </div>
-    <scroll class="list" :data="songs" ref="list">
+    <div class="bg-layer" ref="layer"></div>
+    <scroll class="list" :data="songs" ref="list"
+      :probe-type="probeType"
+      :listen-scroll="listenScroll"
+      @scroll="scroll">
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
@@ -18,6 +22,7 @@
 <script>
   import scroll from 'base-components/scroll/BaseScroll';
   import SongList from 'base-components/songlist/BaseSongList';
+  const RESERVED_HEIGHT = 40;
   export default {
     components: {scroll, SongList},
     props: {
@@ -34,13 +39,35 @@
         default: ''
       }
     },
+    data() {
+      return {
+        scrollY: 0
+      };
+    },
+    watch: {
+      scrollY(newValue) {
+        let translateY = Math.max(this.minTranslateY, newValue);
+        this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`;
+      }
+    },
     computed: {
       bgStyle() {
         return `background-image:url(${this.bgImage})`;
       }
     },
+    created() {
+      this.probeType = 3;
+      this.listenScroll = true;
+    },
     mounted() {
-      this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`;
+      this.imageHeight = this.$refs.bgImage.clientHeight;
+      this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT;
+      this.$refs.list.$el.style.top = `${this.imageHeight}px`;
+    },
+    methods: {
+      scroll(pos) {
+        this.scrollY = pos.y;
+      }
     }
   }
 </script>
