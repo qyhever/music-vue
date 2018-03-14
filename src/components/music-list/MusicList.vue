@@ -47,7 +47,17 @@
     watch: {
       scrollY(newValue) {
         let translateY = Math.max(this.minTranslateY, newValue);
+        let zIndex = 0;
         this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`;
+        if (newValue < this.minTranslateY) {
+          zIndex = 10;
+          this.$refs.bgImage.style.paddingTop = 0;
+          this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`;
+        } else {
+          this.$refs.bgImage.style.paddingTop = '70%';
+          this.$refs.bgImage.style.height = 0;
+        }
+        this.$refs.bgImage.style.zIndex = zIndex;
       }
     },
     computed: {
@@ -60,8 +70,10 @@
       this.listenScroll = true;
     },
     mounted() {
+      // 获取图片高度
       this.imageHeight = this.$refs.bgImage.clientHeight;
       this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT;
+      // 根据图片高度来定位下面的列表盒子
       this.$refs.list.$el.style.top = `${this.imageHeight}px`;
     },
     methods: {
