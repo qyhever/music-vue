@@ -1,10 +1,16 @@
 <template>
   <div class="music-list">
-    <div class="back">
+    <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="play-wrapper">
+        <div class="play" v-show="songs.length > 0" ref="play">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
@@ -15,6 +21,10 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
+
+      <div class="loading-wrapper" v-show="!songs.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -22,9 +32,10 @@
 <script>
   import scroll from 'base-components/scroll/BaseScroll';
   import SongList from 'base-components/songlist/BaseSongList';
+  import loading from 'base-components/loading/BaseLoading';
   const RESERVED_HEIGHT = 40;
   export default {
-    components: {scroll, SongList},
+    components: {scroll, SongList, loading},
     props: {
       bgImage: {
         type: String,
@@ -59,9 +70,11 @@
           zIndex = 10;
           this.$refs.bgImage.style.paddingTop = 0;
           this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`;
+          this.$refs.play.style.display = 'none';
         } else {
           this.$refs.bgImage.style.paddingTop = '70%';
           this.$refs.bgImage.style.height = 0;
+          this.$refs.play.style.display = '';
         }
         this.$refs.bgImage.style.zIndex = zIndex;
         this.$refs.bgImage.style['transform'] = `scale(${scale})`;
@@ -86,6 +99,9 @@
     methods: {
       scroll(pos) {
         this.scrollY = pos.y;
+      },
+      back() {
+       this.$router.go(-1);
       }
     }
   }
