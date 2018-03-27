@@ -48,7 +48,13 @@
       scrollY(newValue) {
         let translateY = Math.max(this.minTranslateY, newValue);
         let zIndex = 0;
+        let scale = 1;
         this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`;
+        const percent = Math.abs(newValue / this.imageHeight);
+        if (newValue > 0) {
+          scale = 1 + percent;
+          zIndex = 10;
+        }
         if (newValue < this.minTranslateY) {
           zIndex = 10;
           this.$refs.bgImage.style.paddingTop = 0;
@@ -58,6 +64,7 @@
           this.$refs.bgImage.style.height = 0;
         }
         this.$refs.bgImage.style.zIndex = zIndex;
+        this.$refs.bgImage.style['transform'] = `scale(${scale})`;
       }
     },
     computed: {
