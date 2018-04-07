@@ -48,6 +48,7 @@
 import {getSliderList, getDiscList} from 'api/recommend';
 import {ERR_OK} from 'api/config';
 import Slider from 'base-components/slider/BaseSlider';
+// import Slider from 'base-components/slider/slider';
 import Scroll from 'base-components/scroll/BaseScroll';
 import Loading from 'base-components/loading/BaseLoading';
 export default {
