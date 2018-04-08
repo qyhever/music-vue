@@ -59,19 +59,23 @@ export default {
         scrollX: true,
         scrollY: false,
         momentum: false,
-        // snap: true,
-        snap: {
-          loop: this.loop,
-          threshold: 0.3
-        },
-        // snapLoop: this.loop,
-        // snapThreshold: 0.3,
-        // snapSpeed: 400
+        // snap: {
+        //   loop: this.loop,
+        //   threshold: 0.3
+        // },
+        snap: true,
+        snapLoop: this.loop,
+        snapThreshold: 0.3,
+        snapSpeed: 400
       });
 
       // 3.1获取当前图片索引
       this.slider.on('scrollEnd', () => {
-        this.currentPageIndex = this.slider.getCurrentPage().pageX;
+        let pageIndex = this.slider.getCurrentPage().pageX;
+        if (this.loop) {
+          pageIndex -= 1;
+        }
+        this.currentPageIndex = pageIndex;
 
         if (this.autoPlay) {
           this._play();
@@ -109,9 +113,9 @@ export default {
       if (this.loop) {
         pageIndex += 1;
       }
-      if (pageIndex === 5) {
-        pageIndex = 0;
-      }
+      // if (pageIndex === 5) {
+      //   pageIndex = 0;
+      // }
       this.timer = setTimeout(() => {
         // this.slider.goToPage(pageIndex, 0, 400);
         this.slider.next();
