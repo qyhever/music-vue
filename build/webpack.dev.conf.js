@@ -13,9 +13,7 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
-// 请求数据
 const axios = require('axios')
-
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {

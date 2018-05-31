@@ -16,13 +16,11 @@
 </template>
 
 <script>
-export default {
-  
-}
+export default {}
 </script>
 
 <style scoped lang="stylus">
-@import "~common/stylus/variable"
+@import '~@/assets/stylus/variable.styl'
 .tab
   display: flex
   height: 44px
