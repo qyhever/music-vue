@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-    <listview :data="singers"></listview>
+    <listview :data="singers" @select="selectSinger"></listview>
+    <router-view />
   </div>
 </template>
 
@@ -9,6 +10,7 @@ import * as api from '@/api/singer'
 import { ERR_OK } from '@/api/config'
 import Singer from '@/assets/js/singer'
 import Listview from './components/listview'
+import { mapMutations } from 'vuex'
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 export default {
@@ -74,6 +76,12 @@ export default {
       })
       // return hot.concat(ret)
       return [...hot, ...ret]
+    },
+    selectSinger(singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      })
+      this.$store.commit('SET_SINGER', singer)
     }
   }
 }

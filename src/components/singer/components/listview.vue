@@ -12,7 +12,10 @@
         ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="(item, i) in group.items" :key="i">
+          <li class="list-group-item"
+            v-for="(item, i) in group.items"
+            :key="i"
+            @click="selectItem(item)">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
           </li>
@@ -117,6 +120,9 @@ export default {
     this.listHeight = []
   },
   methods: {
+    selectItem(item) {
+      this.$emit('select', item)
+    },
     onShortcutTouchstart(e) {
       let anchorIndex = e.target.dataset['index'] // 获取到的是字符串
       let firstTouch = e.touches[0]
